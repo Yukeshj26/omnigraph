@@ -210,80 +210,18 @@ function AuthModal({ isOpen, onClose }) {
   );
 }
 
-// --- Multi-Level Subsection Sidebar Component ---
+// --- Clean & Concise Sidebar Component ---
 function Sidebar({ currentSection, onSelectSection }) {
-  const { user, setIsAuthModalOpen, logout } = useAuth();
-  const [collapsedGroups, setCollapsedGroups] = useState({
-    ingest: false,
-    z3: false,
-    taxonomy: false,
-    graph: false,
-    dev: false,
-    account: false
-  });
+  const { user, setIsAuthModalOpen } = useAuth();
 
-  const toggleGroup = (groupKey) => {
-    setCollapsedGroups(prev => ({ ...prev, [groupKey]: !prev[groupKey] }));
-  };
-
-  const navGroups = [
-    {
-      key: "core",
-      title: "Core Platform",
-      items: [
-        { id: "overview", label: "Executive Dashboard", icon: "📊", badge: "Live" }
-      ]
-    },
-    {
-      key: "ingest",
-      title: "Data Ingestion & Vision",
-      items: [
-        { id: "ingest_pdf", label: "Catalog PDF Ingestion", icon: "📄", badge: "ColPali" },
-        { id: "grounding", label: "Spatial Grounding Studio", icon: "🔍", badge: "BBoxes" },
-        { id: "verifier", label: "Adversarial Verifier Audit", icon: "🛡️", badge: "Critic" }
-      ]
-    },
-    {
-      key: "z3",
-      title: "Neuro-Symbolic Engine",
-      items: [
-        { id: "z3_workbench", label: "Interactive SMT Workbench", icon: "⚖️", badge: "Z3" },
-        { id: "z3_pressure", label: "Hydraulic Pressure Rules", icon: "💧", badge: "4.0x" },
-        { id: "z3_voltage", label: "Voltage Limits & Safety", icon: "⚡", badge: "SMT" },
-        { id: "z3_tolerance", label: "Worst-Case Tolerance Fit", icon: "📐", badge: "Interval" }
-      ]
-    },
-    {
-      key: "taxonomy",
-      title: "Taxonomy & Standards",
-      items: [
-        { id: "catalog", label: "Product Catalog Explorer", icon: "📦", badge: "ETIM 9.0" },
-        { id: "standards", label: "UNSPSC & eCl@ss Directory", icon: "🌐", badge: "Norm" }
-      ]
-    },
-    {
-      key: "graph",
-      title: "Knowledge & ERP Graph",
-      items: [
-        { id: "graph_view", label: "Ontological GraphRAG", icon: "🕸️", badge: "Multi-Hop" },
-        { id: "erp_sync", label: "SAP & Akeneo Connectors", icon: "🚀", badge: "Sync" }
-      ]
-    },
-    {
-      key: "dev",
-      title: "Developer Tools",
-      items: [
-        { id: "api_sandbox", label: "Live REST API Sandbox", icon: "🧪", badge: "Swagger" }
-      ]
-    },
-    {
-      key: "account",
-      title: "Account & Settings",
-      items: [
-        { id: "profile", label: "User Profile & Preferences", icon: "👤", badge: user.role ? "Active" : "" },
-        { id: "api_keys", label: "API Keys & Integrations", icon: "🔑", badge: "Bearer" }
-      ]
-    }
+  const navItems = [
+    { id: "overview", label: "Dashboard", icon: "📊", badge: "Telemetry" },
+    { id: "ingest_pdf", label: "Ingest & Grounding", icon: "📄", badge: "Vision" },
+    { id: "z3_workbench", label: "Z3 SMT Solver", icon: "⚖️", badge: "Proofs" },
+    { id: "catalog", label: "Product Catalog", icon: "📦", badge: "ETIM 9.0" },
+    { id: "graph_view", label: "GraphRAG Network", icon: "🕸️", badge: "Ontology" },
+    { id: "api_sandbox", label: "API Sandbox", icon: "🧪", badge: "Swagger" },
+    { id: "profile", label: "User Profile", icon: "👤", badge: user.role ? "Active" : "" }
   ];
 
   return (
@@ -297,43 +235,25 @@ function Sidebar({ currentSection, onSelectSection }) {
         </div>
       </div>
 
-      {/* Accordion Nav Groups */}
+      {/* Clean Concise Navigation */}
       <nav className="sidebar-nav">
-        {navGroups.map(group => {
-          const isCollapsed = collapsedGroups[group.key];
-          return (
-            <div key={group.key} className="sidebar-group">
-              <div
-                className={`sidebar-group-header ${isCollapsed ? 'collapsed' : ''}`}
-                onClick={() => toggleGroup(group.key)}
-              >
-                <span>{group.title}</span>
-                <svg className="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <polyline points="6 9 12 15 18 9"></polyline>
-                </svg>
-              </div>
-
-              <div className={`sidebar-group-items ${isCollapsed ? 'hidden' : ''}`}>
-                {group.items.map(item => (
-                  <button
-                    key={item.id}
-                    className={`nav-item ${currentSection === item.id ? 'active' : ''}`}
-                    onClick={() => onSelectSection(item.id)}
-                  >
-                    <div className="nav-item-content">
-                      <span style={{ fontSize: "0.95rem" }}>{item.icon}</span>
-                      <span>{item.label}</span>
-                    </div>
-                    {item.badge && <span className="nav-badge-pill">{item.badge}</span>}
-                  </button>
-                ))}
-              </div>
+        <div className="nav-section-label">Workspace</div>
+        {navItems.map(item => (
+          <button
+            key={item.id}
+            className={`nav-item ${currentSection === item.id ? 'active' : ''}`}
+            onClick={() => onSelectSection(item.id)}
+          >
+            <div className="nav-item-content">
+              <span style={{ fontSize: "0.95rem" }}>{item.icon}</span>
+              <span>{item.label}</span>
             </div>
-          );
-        })}
+            {item.badge && <span className="nav-badge-pill">{item.badge}</span>}
+          </button>
+        ))}
       </nav>
 
-      {/* Sidebar Footer with User Profile Pill */}
+      {/* Compact User Profile Pill */}
       <div className="sidebar-footer">
         <div
           className="user-profile-summary"
@@ -356,8 +276,7 @@ function Sidebar({ currentSection, onSelectSection }) {
             style={{ padding: "0.2rem 0.4rem", fontSize: "0.72rem" }}
             onClick={(e) => {
               e.stopPropagation();
-              if (user.id === "guest") setIsAuthModalOpen(true);
-              else setIsAuthModalOpen(true);
+              setIsAuthModalOpen(true);
             }}
           >
             {user.id === "guest" ? "Login" : "Switch"}
@@ -367,6 +286,7 @@ function Sidebar({ currentSection, onSelectSection }) {
     </aside>
   );
 }
+
 
 // --- Top Navbar Component ---
 function TopNavbar({ currentSection, onNavigate }) {
