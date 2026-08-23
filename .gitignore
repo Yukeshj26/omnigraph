@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Env / secrets
+.env
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+
+# Data (keep the demo fixture, ignore anything else dropped in raw_catalogs)
+data/raw_catalogs/*
+!data/raw_catalogs/sample_hydraulic_fitting.pdf
+!data/raw_catalogs/.gitkeep
+
+# Local docker volumes
+neo4j_data/
+qdrant_data/

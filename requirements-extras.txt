@@ -1,0 +1,26 @@
+# Optional, heavier pieces of the full README tech stack.
+# None of these are required for the core scaffold (requirements.txt) to
+# run -- install per-section as you build out that part of the system.
+
+# --- Orchestration frameworks (README: "LangChain / LlamaIndex / CrewAI") ---
+# The scaffold's src/agents/ package implements the extractor/verifier/
+# orchestrator pattern directly against the OpenAI/Anthropic SDKs. Swap in
+# one of these if your team standardizes on a framework instead:
+# langchain>=0.2
+# llama-index>=0.10
+# crewai>=0.30
+# instructor>=1.3          # structured-output helper on top of openai/anthropic
+
+# --- Vision-native ingestion (README: "ColPali, Docling") ---
+# src/ingestion/vision_parser.py ships a PyMuPDF-based fallback (real text +
+# bounding boxes, no GPU). Add these for late-interaction retrieval on dense
+# schematics/CAD blueprints:
+# colpali-engine>=0.3      # requires a CUDA GPU and a model weights download
+# docling>=1.0
+
+# --- Self-hosted inference (README: "vLLM, TensorRT-LLM") ---
+# Only needed if you're self-hosting the SLMs/vision LLMs instead of calling
+# a hosted API. Both require a CUDA GPU and platform-specific install steps
+# -- follow their own install docs rather than pip-installing blind:
+# vllm>=0.4
+# tensorrt-llm

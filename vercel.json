@@ -1,0 +1,54 @@
+{
+  "version": 2,
+  "public": true,
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://omni-graph-product-intel.onrender.com/api/:path*"
+    },
+    {
+      "source": "/validate/:path*",
+      "destination": "https://omni-graph-product-intel.onrender.com/validate/:path*"
+    },
+    {
+      "source": "/ingest/:path*",
+      "destination": "https://omni-graph-product-intel.onrender.com/ingest/:path*"
+    },
+    {
+      "source": "/products/:path*",
+      "destination": "https://omni-graph-product-intel.onrender.com/products/:path*"
+    },
+    {
+      "source": "/health",
+      "destination": "https://omni-graph-product-intel.onrender.com/health"
+    },
+    {
+      "source": "/static/:path*",
+      "destination": "/src/static/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/src/static/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
+      ]
+    }
+  ]
+}
