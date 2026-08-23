@@ -73,7 +73,8 @@ def test_root_serves_html():
     response = client.get("/")
     assert response.status_code == 200
     assert "text/html" in response.headers.get("content-type", "")
-    assert "Omni-Graph" in response.text
+    assert "OMNI GRAPH" in response.text
+
 
 
 def test_ui_rules_meta():
@@ -126,5 +127,19 @@ def test_user_profile():
     assert put_res.status_code == 200
     updated = put_res.json()
     assert updated["user"]["department"] == "Advanced Fluid Power R&D"
+
+
+def test_pdf_report_generation():
+    products_res = client.get("/products/")
+    assert products_res.status_code == 200
+    products = products_res.json()
+    assert len(products) > 0
+    sku = products[0]["sku"]
+
+    pdf_res = client.get(f"/api/reports/pdf?sku={sku}")
+    assert pdf_res.status_code == 200
+    assert pdf_res.headers.get("content-type") == "application/pdf"
+    assert len(pdf_res.content) > 500
+
 
 

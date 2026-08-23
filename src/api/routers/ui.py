@@ -6,7 +6,9 @@ from fastapi import APIRouter, HTTPException, Query, Response
 from fastapi.responses import FileResponse
 
 from src.services.catalog_store import catalog_store
+from src.services.report_generator import generate_compliance_pdf_report
 from src.validation.rules import default_rules
+
 
 router = APIRouter()
 
@@ -54,6 +56,24 @@ def get_catalog_page_image(document_id: str = "sample_hydraulic_fitting", page: 
 def get_live_stats() -> Dict[str, Any]:
     """Return real dynamic KPI metrics computed from the live catalog."""
     return catalog_store.get_stats()
+
+
+@router.get("/reports/pdf", tags=["ui"])
+def get_product_pdf_report(sku: str = Query(..., description="Product SKU to generate report for")):
+    """Generate and return a formal PDF verification & compliance certificate."""
+    product = catalog_store.get_product(sku)
+    if not product:
+        raise HTTPException(status_code=404, detail=f"Product '{sku}' not found.")
+    inspector = _user_profile_store.get("name", "Jeet Pramanick")
+    pdf_bytes = generate_compliance_pdf_report(product, inspector_name=inspector)
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f"attachment; filename={sku}_Compliance_Report.pdf"
+        },
+    )
+
 
 
 @router.get("/demo-products", tags=["ui"])
