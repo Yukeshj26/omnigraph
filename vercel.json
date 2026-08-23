@@ -1,28 +1,29 @@
 {
   "version": 2,
-  "public": true,
   "cleanUrls": true,
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://omni-graph-product-intel.onrender.com/api/:path*"
+      "destination": "https://omnigraph-api.onrender.com/api/:path*"
     },
+
     {
       "source": "/validate/:path*",
-      "destination": "https://omni-graph-product-intel.onrender.com/validate/:path*"
+      "destination": "https://omnigraph-api.onrender.com/validate/:path*"
     },
     {
       "source": "/ingest/:path*",
-      "destination": "https://omni-graph-product-intel.onrender.com/ingest/:path*"
+      "destination": "https://omnigraph-api.onrender.com/ingest/:path*"
     },
     {
       "source": "/products/:path*",
-      "destination": "https://omni-graph-product-intel.onrender.com/products/:path*"
+      "destination": "https://omnigraph-api.onrender.com/products/:path*"
     },
     {
       "source": "/health",
-      "destination": "https://omni-graph-product-intel.onrender.com/health"
+      "destination": "https://omnigraph-api.onrender.com/health"
     },
+
     {
       "source": "/static/:path*",
       "destination": "/src/static/:path*"
