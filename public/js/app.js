@@ -1099,10 +1099,11 @@ KDFM404KPS,KDFM404KPS Dishwasher SS,-- Unbranded --,-- No Unilog Brand --,-- No 
         <div className="card">
           <div className="card-header">
             <div className="card-header-title">
-              <span>⚡</span> Raw Supplier CSV -> Standardized Enterprise Master CSV
+              <span>⚡</span> Raw Supplier CSV → Standardized Enterprise Master CSV
             </div>
             <span className="badge badge-purple">150+ Column Normalizer</span>
           </div>
+
           <div className="card-body">
             <p style={{ fontSize: "0.84rem", color: "var(--text-secondary)", marginBottom: "1rem" }}>
               Paste unstandardized supplier rows (e.g. <code>Mfg_Part_Num, Part_Desc, Part_Manuf</code>) or upload your CSV file. Our intelligence engine resolves brands, infers taxonomy classpaths, normalizes 50 structured attributes, and formats long/marketing descriptions.

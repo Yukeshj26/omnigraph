@@ -1,5 +1,45 @@
 [
   {
+    "id": "aud_1787506986319",
+    "time": "Aug 23, 11:13 PM",
+    "action": "Batch CSV Standardization",
+    "sku": "2 Items",
+    "status": "Enriched (150+ Cols)",
+    "details": "Standardized 2 raw catalog entries into enterprise 150-column schema."
+  },
+  {
+    "id": "aud_1787506986313",
+    "time": "Aug 23, 11:13 PM",
+    "action": "Product Saved",
+    "sku": "PDSH4816AF",
+    "status": "compliant",
+    "details": "Product PDSH4816AF Dishwasher SS - Display Only saved to live catalog."
+  },
+  {
+    "id": "aud_1787506986309",
+    "time": "Aug 23, 11:13 PM",
+    "action": "Product Saved",
+    "sku": "DCB518ASTS06G",
+    "status": "compliant",
+    "details": "Product DCB518ASTS06G Diablo 1/2\"x18\" - Sanding Belt 6pc saved to live catalog."
+  },
+  {
+    "id": "aud_1787506978586",
+    "time": "Aug 23, 11:12 PM",
+    "action": "PDF Scanned",
+    "sku": "SAMPLE_HYDRAULIC_FITTING",
+    "status": "Compliant",
+    "details": "Extracted 9 attributes from sample_hydraulic_fitting.pdf."
+  },
+  {
+    "id": "aud_1787506978584",
+    "time": "Aug 23, 11:12 PM",
+    "action": "Product Saved",
+    "sku": "SAMPLE_HYDRAULIC_FITTING",
+    "status": "compliant",
+    "details": "Product Sample Hydraulic Fitting saved to live catalog."
+  },
+  {
     "id": "aud_1787506185966",
     "time": "Aug 23, 10:59 PM",
     "action": "Batch CSV Standardization",
