@@ -96,8 +96,13 @@ function AuthProvider({ children }) {
       connected_integrations: {},
       preferences: { theme: "light", email_alerts: false, auto_validation: true }
     };
+    setUser(guestUser);
+    localStorage.setItem("ogpi_user", JSON.stringify(guestUser));
+  };
+
   const updateUser = async (updatedFields) => {
     const updatedUser = { ...user, ...updatedFields };
+
     setUser(updatedUser);
     localStorage.setItem("ogpi_user", JSON.stringify(updatedUser));
     try {
