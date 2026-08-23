@@ -274,10 +274,11 @@ def get_user_profile() -> Dict[str, Any]:
 
 @router.put("/user/profile", tags=["user"])
 def update_user_profile(payload: Dict[str, Any]) -> Dict[str, Any]:
-    for key in ["name", "department", "role", "organization", "preferences"]:
+    for key in ["name", "department", "role", "organization", "avatar", "preferences"]:
         if key in payload:
             _user_profile_store[key] = payload[key]
     return {
         "status": "updated",
         "user": _user_profile_store
     }
+

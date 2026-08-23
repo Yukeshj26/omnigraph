@@ -96,32 +96,31 @@ function AuthProvider({ children }) {
       connected_integrations: {},
       preferences: { theme: "light", email_alerts: false, auto_validation: true }
     };
-    setUser(guestUser);
-    localStorage.setItem("ogpi_user", JSON.stringify(guestUser));
-  };
-
   const updateUser = async (updatedFields) => {
+    const updatedUser = { ...user, ...updatedFields };
+    setUser(updatedUser);
+    localStorage.setItem("ogpi_user", JSON.stringify(updatedUser));
     try {
       const res = await apiFetch("/api/user/profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedFields)
       });
-      const data = await res.json();
-      setUser(data.user);
-      localStorage.setItem("ogpi_user", JSON.stringify(data.user));
+      if (res.ok) {
+        const data = await res.json();
+        const finalUser = { ...updatedUser, ...(data.user || {}) };
+        setUser(finalUser);
+        localStorage.setItem("ogpi_user", JSON.stringify(finalUser));
+      }
     } catch (e) {
-      setUser(prev => {
-        const next = { ...prev, ...updatedFields };
-        localStorage.setItem("ogpi_user", JSON.stringify(next));
-        return next;
-      });
+      console.warn("Backend profile sync notice:", e);
     }
   };
 
   if (loading || !user) {
     return <div style={{ padding: "2rem", textAlign: "center", color: "var(--text-muted)" }}>Loading OMNI GRAPH Studio...</div>;
   }
+
 
   return (
     <AuthContext.Provider value={{ user, setUser, isAuthModalOpen, setIsAuthModalOpen, loginWithGoogle, loginWithEmail, logout, updateUser }}>
@@ -392,11 +391,22 @@ function UserProfileView() {
   ];
 
   useEffect(() => {
+    if (user) {
+      setName(user.name);
+      setDepartment(user.department);
+      setRole(user.role);
+      setOrganization(user.organization || "Omni-Graph Industrial Labs");
+      setAvatar(user.avatar);
+    }
+  }, [user]);
+
+  useEffect(() => {
     apiFetch("/api/audit-logs")
       .then(res => res.json())
       .then(data => setAuditLogs(data))
       .catch(() => {});
   }, [activeTab]);
+
 
   const handleSave = async (e) => {
     e.preventDefault();
