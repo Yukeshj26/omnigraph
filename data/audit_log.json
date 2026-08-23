@@ -1,0 +1,42 @@
+[
+  {
+    "id": "aud_1787500853729",
+    "time": "Aug 23, 09:30 PM",
+    "action": "PDF Scanned",
+    "sku": "SAMPLE_HYDRAULIC_FITTING",
+    "status": "Compliant",
+    "details": "Extracted 9 attributes from sample_hydraulic_fitting.pdf."
+  },
+  {
+    "id": "aud_1787500853726",
+    "time": "Aug 23, 09:30 PM",
+    "action": "Product Saved",
+    "sku": "SAMPLE_HYDRAULIC_FITTING",
+    "status": "compliant",
+    "details": "Product Sample Hydraulic Fitting saved to live catalog."
+  },
+  {
+    "id": "aud_1787500835233",
+    "time": "Aug 23, 09:30 PM",
+    "action": "PDF Scanned",
+    "sku": "SAMPLE_HYDRAULIC_FITTING",
+    "status": "Compliant",
+    "details": "Extracted 9 attributes from sample_hydraulic_fitting.pdf."
+  },
+  {
+    "id": "aud_1787500835231",
+    "time": "Aug 23, 09:30 PM",
+    "action": "Product Saved",
+    "sku": "SAMPLE_HYDRAULIC_FITTING",
+    "status": "compliant",
+    "details": "Product Sample Hydraulic Fitting saved to live catalog."
+  },
+  {
+    "id": "aud_1787500834811",
+    "time": "Aug 23, 09:30 PM",
+    "action": "System Initialization",
+    "sku": "SYSTEM",
+    "status": "Success",
+    "details": "Catalog store initialized with verified industrial specifications."
+  }
+]

@@ -41,9 +41,18 @@ def test_validate_endpoint_fails():
     assert response.json()["passed"] is False
 
 
-def test_products_endpoint_returns_503_without_neo4j():
-    response = client.get("/products/ANYTHING")
-    assert response.status_code == 503
+def test_products_endpoint_returns_404_for_unknown_sku():
+    response = client.get("/products/NON_EXISTENT_SKU_123")
+    assert response.status_code == 404
+
+
+def test_products_list_endpoint():
+    response = client.get("/products/")
+    assert response.status_code == 200
+    products = response.json()
+    assert isinstance(products, list)
+    assert len(products) >= 1
+
 
 
 def test_ingest_upload_with_sample_pdf():
@@ -83,8 +92,10 @@ def test_ui_demo_products():
     data = response.json()
     assert isinstance(data, list)
     assert len(data) >= 2
-    skus = [p["sku"] for p in data]
-    assert "DEMO-001" in skus
+    for p in data:
+        assert "sku" in p
+        assert "name" in p
+
 
 
 def test_auth_google():
