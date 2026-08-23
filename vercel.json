@@ -1,12 +1,12 @@
 {
   "version": 2,
   "cleanUrls": true,
+  "trailingSlash": false,
   "rewrites": [
     {
       "source": "/api/:path*",
       "destination": "https://omnigraph-api.onrender.com/api/:path*"
     },
-
     {
       "source": "/validate/:path*",
       "destination": "https://omnigraph-api.onrender.com/validate/:path*"
@@ -23,14 +23,9 @@
       "source": "/health",
       "destination": "https://omnigraph-api.onrender.com/health"
     },
-
-    {
-      "source": "/static/:path*",
-      "destination": "/src/static/:path*"
-    },
     {
       "source": "/(.*)",
-      "destination": "/src/static/index.html"
+      "destination": "/public/$1"
     }
   ],
   "headers": [
@@ -44,10 +39,6 @@
         {
           "key": "X-Content-Type-Options",
           "value": "nosniff"
-        },
-        {
-          "key": "Referrer-Policy",
-          "value": "strict-origin-when-cross-origin"
         }
       ]
     }
