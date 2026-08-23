@@ -68,7 +68,7 @@
         "standard_code": null,
         "confidence": 0.6,
         "citation": {
-          "document_id": "tmpd7zic8kr",
+          "document_id": "tmpo3gsf9nb",
           "page_number": 1,
           "bounding_box": {
             "x0": 72.0,
@@ -89,7 +89,7 @@
         "standard_code": null,
         "confidence": 0.6,
         "citation": {
-          "document_id": "tmpd7zic8kr",
+          "document_id": "tmpo3gsf9nb",
           "page_number": 1,
           "bounding_box": {
             "x0": 72.0,
@@ -110,7 +110,7 @@
         "standard_code": null,
         "confidence": 0.6,
         "citation": {
-          "document_id": "tmpd7zic8kr",
+          "document_id": "tmpo3gsf9nb",
           "page_number": 1,
           "bounding_box": {
             "x0": 72.0,
@@ -131,7 +131,7 @@
         "standard_code": null,
         "confidence": 0.6,
         "citation": {
-          "document_id": "tmpd7zic8kr",
+          "document_id": "tmpo3gsf9nb",
           "page_number": 1,
           "bounding_box": {
             "x0": 72.0,
@@ -152,7 +152,7 @@
         "standard_code": null,
         "confidence": 0.6,
         "citation": {
-          "document_id": "tmpd7zic8kr",
+          "document_id": "tmpo3gsf9nb",
           "page_number": 1,
           "bounding_box": {
             "x0": 72.0,
@@ -173,7 +173,7 @@
         "standard_code": null,
         "confidence": 0.6,
         "citation": {
-          "document_id": "tmpd7zic8kr",
+          "document_id": "tmpo3gsf9nb",
           "page_number": 1,
           "bounding_box": {
             "x0": 72.0,
@@ -194,7 +194,7 @@
         "standard_code": null,
         "confidence": 0.6,
         "citation": {
-          "document_id": "tmpd7zic8kr",
+          "document_id": "tmpo3gsf9nb",
           "page_number": 1,
           "bounding_box": {
             "x0": 72.0,
@@ -215,7 +215,7 @@
         "standard_code": null,
         "confidence": 0.6,
         "citation": {
-          "document_id": "tmpd7zic8kr",
+          "document_id": "tmpo3gsf9nb",
           "page_number": 1,
           "bounding_box": {
             "x0": 72.0,
@@ -236,7 +236,7 @@
         "standard_code": null,
         "confidence": 0.6,
         "citation": {
-          "document_id": "tmpd7zic8kr",
+          "document_id": "tmpo3gsf9nb",
           "page_number": 1,
           "bounding_box": {
             "x0": 72.0,
@@ -249,7 +249,7 @@
       }
     ],
     "source_document_ids": [
-      "tmpd7zic8kr"
+      "tmpo3gsf9nb"
     ],
     "status": "compliant",
     "verifier_notes": [],

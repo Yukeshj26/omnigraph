@@ -1,5 +1,21 @@
 [
   {
+    "id": "aud_1787501397666",
+    "time": "Aug 23, 09:39 PM",
+    "action": "PDF Scanned",
+    "sku": "SAMPLE_HYDRAULIC_FITTING",
+    "status": "Compliant",
+    "details": "Extracted 9 attributes from sample_hydraulic_fitting.pdf."
+  },
+  {
+    "id": "aud_1787501397663",
+    "time": "Aug 23, 09:39 PM",
+    "action": "Product Saved",
+    "sku": "SAMPLE_HYDRAULIC_FITTING",
+    "status": "compliant",
+    "details": "Product Sample Hydraulic Fitting saved to live catalog."
+  },
+  {
     "id": "aud_1787500853729",
     "time": "Aug 23, 09:30 PM",
     "action": "PDF Scanned",

@@ -1,6 +1,6 @@
 /**
  * Omni-Graph Product Intelligence (OGPI) - React 18 Studio App
- * Real Data, Live API Integration & Dynamic Neuro-Symbolic Validation
+ * Clean & Streamlined Interface (Dashboard, Ingestion, Catalog, Graph & Profile)
  */
 
 const { useState, useEffect, useContext, createContext, useMemo, useRef } = React;
@@ -20,7 +20,6 @@ function AuthProvider({ children }) {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Fetch real profile from backend on mount
   useEffect(() => {
     apiFetch("/api/user/profile")
       .then(res => res.json())
@@ -238,17 +237,15 @@ function AuthModal({ isOpen, onClose }) {
   );
 }
 
-// --- Clean Concise Sidebar ---
+// --- Streamlined Sidebar (Removed Physics & Sandbox Pages) ---
 function Sidebar({ currentSection, onSelectSection }) {
   const { user, setIsAuthModalOpen } = useAuth();
 
   const navItems = [
     { id: "overview", label: "Dashboard", icon: "📊", badge: "Live" },
     { id: "ingest_pdf", label: "Upload & Scan PDFs", icon: "📄", badge: "Scanner" },
-    { id: "z3_workbench", label: "Safety & Physics Check", icon: "⚖️", badge: "Rules" },
     { id: "catalog", label: "Product Catalog", icon: "📦", badge: "Catalog" },
     { id: "graph_view", label: "Relationship Map", icon: "🕸️", badge: "Network" },
-    { id: "api_sandbox", label: "API & Connectors", icon: "🧪", badge: "Tools" },
     { id: "profile", label: "My Profile", icon: "👤", badge: "Account" }
   ];
 
@@ -326,10 +323,8 @@ function TopNavbar({ currentSection, onNavigate }) {
   const titles = {
     overview: { title: "Executive Dashboard", sub: "Live catalog metrics, safety pass rates, and activity history" },
     ingest_pdf: { title: "Upload & Scan Catalog PDFs", sub: "Extract product numbers with genuine visual proof and bounding boxes" },
-    z3_workbench: { title: "Engineering Safety & Physics Validator", sub: "Mathematically test and prove that engineering rules and margins hold" },
     catalog: { title: "Standardized Product Catalog", sub: "Browse, manage, search, and export enriched industrial product specifications" },
     graph_view: { title: "Product Knowledge & Relationship Map", sub: "Explore live connections between parts, safety standards, and ERP targets" },
-    api_sandbox: { title: "API Tester & Integration Hub", sub: "Test live endpoints and sync with SAP S/4HANA & Akeneo PIM" },
     profile: { title: "User Profile & Settings", sub: "Manage personal account, security tokens, and enterprise connectors" }
   };
 
@@ -568,7 +563,7 @@ function UserProfileView() {
                   {auditLogs.length === 0 ? (
                     <tr>
                       <td colSpan="5" style={{ textAlign: "center", color: "var(--text-muted)", padding: "1.5rem" }}>
-                        No activity records found yet. Upload a PDF or run safety checks to populate live history.
+                        No activity records found yet. Upload a PDF or add products to populate live history.
                       </td>
                     </tr>
                   ) : (
@@ -605,17 +600,10 @@ function OverviewView({ onNavigate }) {
     safety_pass_rate: 100
   });
 
-  const [recentAudits, setRecentAudits] = useState([]);
-
   useEffect(() => {
     apiFetch("/api/stats")
       .then(res => res.json())
       .then(data => setStats(data))
-      .catch(() => {});
-
-    apiFetch("/api/audit-logs")
-      .then(res => res.json())
-      .then(data => setRecentAudits(data.slice(0, 4)))
       .catch(() => {});
   }, []);
 
@@ -709,14 +697,14 @@ function OverviewView({ onNavigate }) {
           <button className="btn btn-primary" onClick={() => onNavigate("ingest_pdf")}>
             📄 Scan a Catalog PDF
           </button>
-          <button className="btn btn-subtle" onClick={() => onNavigate("z3_workbench")}>
-            ⚖️ Test Safety & Physics Rules
-          </button>
           <button className="btn btn-secondary" onClick={() => onNavigate("catalog")}>
             📦 View Product Catalog ({stats.total_products})
           </button>
           <button className="btn btn-secondary" onClick={() => onNavigate("graph_view")}>
             🕸️ Open Relationship Map
+          </button>
+          <button className="btn btn-secondary" onClick={() => onNavigate("profile")}>
+            👤 View My Profile
           </button>
         </div>
       </div>
@@ -832,7 +820,7 @@ function IngestionStudioView() {
                   }}
                 />
 
-                {/* Fallback & Spatial Bounding Box Overlays */}
+                {/* Spatial Bounding Box Overlays */}
                 <div style={{ padding: "0.75rem" }}>
                   {(product.attributes || []).map(attr => (
                     <div
@@ -917,200 +905,7 @@ function IngestionStudioView() {
   );
 }
 
-// --- View 4: Live Safety & Physics Validator ---
-function Z3WorkbenchView() {
-  const [params, setParams] = useState({
-    operating_pressure_bar: 150,
-    burst_pressure_bar: 700,
-    rated_voltage_v: 24,
-    operating_voltage_v: 24,
-    shaft_diameter_mm: 12.0,
-    bore_diameter_mm: 12.2
-  });
-
-  const [report, setReport] = useState({ passed: true, issues: [] });
-  const [solverTimeMs, setSolverTimeMs] = useState(0);
-
-  const runValidation = async (newParams) => {
-    const start = performance.now();
-    const payload = {
-      sku: "SAFETY-TEST-01",
-      name: "Interactive Safety Check",
-      attributes: [
-        { key: "operating_pressure_bar", label: "Operating Pressure", value: newParams.operating_pressure_bar, unit: "bar" },
-        { key: "burst_pressure_bar", label: "Burst Pressure", value: newParams.burst_pressure_bar, unit: "bar" },
-        { key: "rated_voltage_v", label: "Rated Voltage", value: newParams.rated_voltage_v, unit: "V" },
-        { key: "operating_voltage_v", label: "Operating Voltage", value: newParams.operating_voltage_v, unit: "V" },
-        { key: "shaft_diameter_mm", label: "Shaft Diameter", value: newParams.shaft_diameter_mm, tolerance: 0.05, unit: "mm" },
-        { key: "bore_diameter_mm", label: "Bore Diameter", value: newParams.bore_diameter_mm, tolerance: 0.05, unit: "mm" }
-      ]
-    };
-
-    try {
-      const res = await apiFetch("/validate/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-      const elapsed = (performance.now() - start).toFixed(1);
-      setSolverTimeMs(elapsed);
-      if (res.ok) {
-        const data = await res.json();
-        setReport(data);
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  const updateParam = (key, val) => {
-    const next = { ...params, [key]: parseFloat(val) };
-    setParams(next);
-    runValidation(next);
-  };
-
-  useEffect(() => {
-    runValidation(params);
-  }, []);
-
-  return (
-    <div>
-      <div className={`rule-proof-box ${report.passed ? 'pass' : 'fail'}`} style={{ marginBottom: "1.5rem" }}>
-        <div style={{ fontSize: "1.3rem" }}>{report.passed ? "✅" : "❌"}</div>
-        <div>
-          <strong>
-            {report.passed ? "ALL Z3 SMT SAFETY RULES SATISFIED (SAT)" : "SAFETY VIOLATIONS DETECTED (UNSAT)"}
-          </strong><br/>
-          <span>
-            {report.passed ? 
-              `Mathematical proof verified in ${solverTimeMs}ms. All engineering safety margins hold.` : 
-              `${report.issues.length} physical rule(s) violated. Move sliders to find compliant parameters.`}
-          </span>
-        </div>
-      </div>
-
-      <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1rem" }}>
-        <button
-          className="btn btn-secondary btn-sm"
-          onClick={() => {
-            const safe = { operating_pressure_bar: 150, burst_pressure_bar: 700, rated_voltage_v: 24, operating_voltage_v: 24, shaft_diameter_mm: 12.0, bore_diameter_mm: 12.2 };
-            setParams(safe);
-            runValidation(safe);
-          }}
-        >
-          Load Safe Baseline (All Pass)
-        </button>
-
-        <button
-          className="btn btn-secondary btn-sm"
-          style={{ color: "var(--color-danger)" }}
-          onClick={() => {
-            const unsafe = { operating_pressure_bar: 150, burst_pressure_bar: 200, rated_voltage_v: 12, operating_voltage_v: 24, shaft_diameter_mm: 12.3, bore_diameter_mm: 12.0 };
-            setParams(unsafe);
-            runValidation(unsafe);
-          }}
-        >
-          Trigger Violation Conditions
-        </button>
-      </div>
-
-      {/* Rule 1: Pressure */}
-      <div className={`rule-card ${params.burst_pressure_bar >= 4 * params.operating_pressure_bar ? 'verified' : 'violated'}`}>
-        <div className="rule-header">
-          <div>
-            <span className="rule-title">1. Hydraulic Pressure Safety Margin</span>
-            <p style={{ fontSize: "0.78rem", color: "var(--text-muted)" }}>
-              Z3 Theorem: Burst Pressure ≥ 4.0 × Operating Pressure (Hydraulic Safety Standard)
-            </p>
-          </div>
-          <span className={`badge ${params.burst_pressure_bar >= 4 * params.operating_pressure_bar ? 'badge-success' : 'badge-danger'}`}>
-            {params.burst_pressure_bar >= 4 * params.operating_pressure_bar ? 'SAFE (PASS)' : 'VIOLATION (BURST RISK)'}
-          </span>
-        </div>
-        <div className="slider-group">
-          <div className="slider-control">
-            <div className="slider-label-row">
-              <span>Operating Working Pressure:</span>
-              <strong>{params.operating_pressure_bar}</strong> bar
-            </div>
-            <input type="range" className="slider-input" min="50" max="300" step="5" value={params.operating_pressure_bar} onChange={e => updateParam('operating_pressure_bar', e.target.value)} />
-          </div>
-          <div className="slider-control">
-            <div className="slider-label-row">
-              <span>Burst Failure Pressure:</span>
-              <strong>{params.burst_pressure_bar}</strong> bar (Requires ≥ {params.operating_pressure_bar * 4} bar)
-            </div>
-            <input type="range" className="slider-input" min="100" max="1000" step="10" value={params.burst_pressure_bar} onChange={e => updateParam('burst_pressure_bar', e.target.value)} />
-          </div>
-        </div>
-      </div>
-
-      {/* Rule 2: Voltage */}
-      <div className={`rule-card ${params.operating_voltage_v <= params.rated_voltage_v ? 'verified' : 'violated'}`}>
-        <div className="rule-header">
-          <div>
-            <span className="rule-title">2. Electrical Voltage Limit</span>
-            <p style={{ fontSize: "0.78rem", color: "var(--text-muted)" }}>
-              Z3 Theorem: Operating Voltage ≤ Maximum Rated Voltage
-            </p>
-          </div>
-          <span className={`badge ${params.operating_voltage_v <= params.rated_voltage_v ? 'badge-success' : 'badge-danger'}`}>
-            {params.operating_voltage_v <= params.rated_voltage_v ? 'SAFE (PASS)' : 'OVERVOLTAGE VIOLATION'}
-          </span>
-        </div>
-        <div className="slider-group">
-          <div className="slider-control">
-            <div className="slider-label-row">
-              <span>Maximum Rated Voltage:</span>
-              <strong>{params.rated_voltage_v}</strong> V
-            </div>
-            <input type="range" className="slider-input" min="6" max="48" step="6" value={params.rated_voltage_v} onChange={e => updateParam('rated_voltage_v', e.target.value)} />
-          </div>
-          <div className="slider-control">
-            <div className="slider-label-row">
-              <span>Operating Voltage:</span>
-              <strong>{params.operating_voltage_v}</strong> V
-            </div>
-            <input type="range" className="slider-input" min="6" max="48" step="6" value={params.operating_voltage_v} onChange={e => updateParam('operating_voltage_v', e.target.value)} />
-          </div>
-        </div>
-      </div>
-
-      {/* Rule 3: Size & Fit */}
-      <div className={`rule-card ${params.shaft_diameter_mm <= params.bore_diameter_mm ? 'verified' : 'violated'}`}>
-        <div className="rule-header">
-          <div>
-            <span className="rule-title">3. Part Size & Fit Compatibility</span>
-            <p style={{ fontSize: "0.78rem", color: "var(--text-muted)" }}>
-              Z3 Theorem: (Shaft + Tol) ≤ (Bore - Tol) under worst-case interval arithmetic
-            </p>
-          </div>
-          <span className={`badge ${params.shaft_diameter_mm <= params.bore_diameter_mm ? 'badge-success' : 'badge-danger'}`}>
-            {params.shaft_diameter_mm <= params.bore_diameter_mm ? 'PERFECT FIT (PASS)' : 'PARTS OVERLAP (NO FIT)'}
-          </span>
-        </div>
-        <div className="slider-group">
-          <div className="slider-control">
-            <div className="slider-label-row">
-              <span>Shaft Outer Diameter:</span>
-              <strong>{params.shaft_diameter_mm}</strong> mm
-            </div>
-            <input type="range" className="slider-input" min="10.0" max="15.0" step="0.1" value={params.shaft_diameter_mm} onChange={e => updateParam('shaft_diameter_mm', e.target.value)} />
-          </div>
-          <div className="slider-control">
-            <div className="slider-label-row">
-              <span>Hole (Bore) Inner Diameter:</span>
-              <strong>{params.bore_diameter_mm}</strong> mm
-            </div>
-            <input type="range" className="slider-input" min="10.0" max="15.0" step="0.1" value={params.bore_diameter_mm} onChange={e => updateParam('bore_diameter_mm', e.target.value)} />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// --- View 5: Real Product Catalog & Add Product Modal ---
+// --- View 4: Real Product Catalog & Add Product Modal ---
 function CatalogView() {
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState("");
@@ -1352,7 +1147,7 @@ function CatalogView() {
   );
 }
 
-// --- View 6: Dynamic Relationship Map ---
+// --- View 5: Dynamic Relationship Map ---
 function GraphRAGView() {
   const canvasRef = useRef(null);
   const [products, setProducts] = useState([]);
@@ -1387,7 +1182,6 @@ function GraphRAGView() {
 
     const links = [];
 
-    // Add each live product
     products.forEach((p, idx) => {
       const angle = (idx / (products.length || 1)) * Math.PI * 0.8 + 0.3;
       const px = width * 0.5 + Math.cos(angle) * (width * 0.25);
@@ -1445,7 +1239,6 @@ function GraphRAGView() {
       ctx.fillText(n.label, n.x, n.y + n.r + 14);
     });
 
-    // Handle canvas click
     canvas.onclick = (e) => {
       const rect = canvas.getBoundingClientRect();
       const clickX = e.clientX - rect.left;
@@ -1490,83 +1283,6 @@ function GraphRAGView() {
   );
 }
 
-// --- View 7: API Tester ---
-function ApiSandboxView() {
-  const [output, setOutput] = useState("// Click any endpoint button above to execute live...");
-  const [status, setStatus] = useState("-");
-  const [latency, setLatency] = useState("-");
-
-  const runTest = async (endpoint, method = "GET", body = null) => {
-    setStatus("Calling...");
-    const start = performance.now();
-    try {
-      const opts = { method };
-      if (body) {
-        opts.headers = { "Content-Type": "application/json" };
-        opts.body = JSON.stringify(body);
-      }
-      const res = await apiFetch(endpoint, opts);
-      const data = await res.json();
-      const elapsed = Math.round(performance.now() - start);
-      setStatus(`HTTP ${res.status} ${res.statusText}`);
-      setLatency(`${elapsed} ms`);
-      setOutput(JSON.stringify(data, null, 2));
-    } catch (e) {
-      setStatus("Error");
-      setOutput(e.message);
-    }
-  };
-
-  return (
-    <div className="card">
-      <div className="card-header">
-        <div className="card-header-title">
-          <span>⚡</span> Live API Tester & Endpoint Playground
-        </div>
-        <span className="badge badge-info">FastAPI v1.0.0</span>
-      </div>
-      <div className="card-body">
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginBottom: "1rem" }}>
-          <button className="btn btn-secondary btn-sm" onClick={() => runTest('/health')}>
-            GET /health
-          </button>
-          <button className="btn btn-secondary btn-sm" onClick={() => runTest('/api/stats')}>
-            GET /api/stats
-          </button>
-          <button className="btn btn-secondary btn-sm" onClick={() => runTest('/products/')}>
-            GET /products/
-          </button>
-          <button className="btn btn-secondary btn-sm" onClick={() => runTest('/api/rules-meta')}>
-            GET /api/rules-meta
-          </button>
-          <button className="btn btn-secondary btn-sm" onClick={() => runTest('/api/audit-logs')}>
-            GET /api/audit-logs
-          </button>
-          <button
-            className="btn btn-primary btn-sm"
-            onClick={() => runTest('/validate/', 'POST', {
-              sku: "LIVE-TEST-01",
-              attributes: [
-                { key: "operating_pressure_bar", label: "Operating Pressure", value: 150 },
-                { key: "burst_pressure_bar", label: "Burst Pressure", value: 700 }
-              ]
-            })}
-          >
-            POST /validate/ (Z3 SMT Check)
-          </button>
-        </div>
-
-        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem", fontSize: "0.8rem", color: "var(--text-muted)" }}>
-          <span>Status: <strong style={{ color: "var(--text-primary)" }}>{status}</strong></span>
-          <span>Latency: <strong style={{ color: "var(--text-primary)" }}>{latency}</strong></span>
-        </div>
-
-        <pre className="code-block">{output}</pre>
-      </div>
-    </div>
-  );
-}
-
 // --- Main Application Root ---
 function App() {
   const [currentSection, setCurrentSection] = useState("overview");
@@ -1578,14 +1294,10 @@ function App() {
         return <OverviewView onNavigate={setCurrentSection} />;
       case "ingest_pdf":
         return <IngestionStudioView />;
-      case "z3_workbench":
-        return <Z3WorkbenchView />;
       case "catalog":
         return <CatalogView />;
       case "graph_view":
         return <GraphRAGView />;
-      case "api_sandbox":
-        return <ApiSandboxView />;
       case "profile":
         return <UserProfileView />;
       default:
