@@ -252,14 +252,20 @@ function Sidebar({ currentSection, onSelectSection }) {
   return (
     <aside className="app-sidebar">
       <div className="sidebar-header">
-        <div className="brand-logo-badge">OG</div>
-        <div className="brand-text">
-          <span className="brand-title">Product Intelligence</span>
-          <span className="brand-subtitle">Smart Catalog AI</span>
-        </div>
+        <img
+          src="/assets/logo.png"
+          alt="OMNI GRAPH"
+          className="brand-logo-img"
+          onError={(e) => {
+            if (!e.target.src.includes('/static/assets/logo.png')) {
+              e.target.src = '/static/assets/logo.png';
+            }
+          }}
+        />
       </div>
 
       <nav className="sidebar-nav">
+
         <div className="nav-section-label">Navigation</div>
         {navItems.map(item => (
           <button
