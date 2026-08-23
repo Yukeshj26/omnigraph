@@ -1,5 +1,85 @@
 [
   {
+    "id": "aud_1787506185966",
+    "time": "Aug 23, 10:59 PM",
+    "action": "Batch CSV Standardization",
+    "sku": "2 Items",
+    "status": "Enriched (150+ Cols)",
+    "details": "Standardized 2 raw catalog entries into enterprise 150-column schema."
+  },
+  {
+    "id": "aud_1787506185961",
+    "time": "Aug 23, 10:59 PM",
+    "action": "Product Saved",
+    "sku": "PDSH4816AF",
+    "status": "compliant",
+    "details": "Product PDSH4816AF Dishwasher SS - Display Only saved to live catalog."
+  },
+  {
+    "id": "aud_1787506185953",
+    "time": "Aug 23, 10:59 PM",
+    "action": "Product Saved",
+    "sku": "DCB518ASTS06G",
+    "status": "compliant",
+    "details": "Product DCB518ASTS06G Diablo 1/2\"x18\" - Sanding Belt 6pc saved to live catalog."
+  },
+  {
+    "id": "aud_1787506184380",
+    "time": "Aug 23, 10:59 PM",
+    "action": "PDF Scanned",
+    "sku": "SAMPLE_HYDRAULIC_FITTING",
+    "status": "Compliant",
+    "details": "Extracted 9 attributes from sample_hydraulic_fitting.pdf."
+  },
+  {
+    "id": "aud_1787506184377",
+    "time": "Aug 23, 10:59 PM",
+    "action": "Product Saved",
+    "sku": "SAMPLE_HYDRAULIC_FITTING",
+    "status": "compliant",
+    "details": "Product Sample Hydraulic Fitting saved to live catalog."
+  },
+  {
+    "id": "aud_1787506154103",
+    "time": "Aug 23, 10:59 PM",
+    "action": "Batch CSV Standardization",
+    "sku": "2 Items",
+    "status": "Enriched (150+ Cols)",
+    "details": "Standardized 2 raw catalog entries into enterprise 150-column schema."
+  },
+  {
+    "id": "aud_1787506154100",
+    "time": "Aug 23, 10:59 PM",
+    "action": "Product Saved",
+    "sku": "PDSH4816AF",
+    "status": "compliant",
+    "details": "Product PDSH4816AF Dishwasher SS - Display Only saved to live catalog."
+  },
+  {
+    "id": "aud_1787506154085",
+    "time": "Aug 23, 10:59 PM",
+    "action": "Product Saved",
+    "sku": "DCB518ASTS06G",
+    "status": "compliant",
+    "details": "Product DCB518ASTS06G Diablo 1/2\"x18\" - Sanding Belt 6pc saved to live catalog."
+  },
+  {
+    "id": "aud_1787506149947",
+    "time": "Aug 23, 10:59 PM",
+    "action": "PDF Scanned",
+    "sku": "SAMPLE_HYDRAULIC_FITTING",
+    "status": "Compliant",
+    "details": "Extracted 9 attributes from sample_hydraulic_fitting.pdf."
+  },
+  {
+    "id": "aud_1787506149944",
+    "time": "Aug 23, 10:59 PM",
+    "action": "Product Saved",
+    "sku": "SAMPLE_HYDRAULIC_FITTING",
+    "status": "compliant",
+    "details": "Product Sample Hydraulic Fitting saved to live catalog."
+  },
+  {
     "id": "aud_1787505624582",
     "time": "Aug 23, 10:50 PM",
     "action": "Batch CSV Standardization",

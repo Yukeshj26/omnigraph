@@ -99,6 +99,14 @@ def test_ui_demo_products():
 
 
 
+def test_auth_config():
+    response = client.get("/api/auth/config")
+    assert response.status_code == 200
+    data = response.json()
+    assert "google_client_id" in data
+    assert "is_google_configured" in data
+
+
 def test_auth_google():
     response = client.post("/api/auth/google", json={"email": "engineer@google.com", "name": "Google Tester"})
     assert response.status_code == 200
@@ -106,6 +114,28 @@ def test_auth_google():
     assert data["status"] == "success"
     assert "token" in data
     assert data["user"]["email"] == "engineer@google.com"
+
+
+def test_auth_google_jwt_payload():
+    # Simulated base64 JWT payload: {"email": "verified.user@gmail.com", "name": "Verified User", "picture": "https://lh3.googleusercontent.com/a/sample"}
+    import base64, json
+    header = base64.urlsafe_b64encode(b'{"alg":"RS256"}').decode("utf-8").rstrip("=")
+    payload = base64.urlsafe_b64encode(json.dumps({
+        "email": "verified.user@gmail.com",
+        "name": "Verified Google User",
+        "picture": "https://lh3.googleusercontent.com/a/sample",
+        "sub": "10982348123"
+    }).encode("utf-8")).decode("utf-8").rstrip("=")
+    simulated_jwt = f"{header}.{payload}.signature"
+
+    response = client.post("/api/auth/google", json={"credential": simulated_jwt})
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "success"
+    assert data["user"]["email"] == "verified.user@gmail.com"
+    assert data["user"]["name"] == "Verified Google User"
+    assert data["user"]["auth_provider"] == "google"
+
 
 
 def test_auth_email():

@@ -78,6 +78,24 @@ function AuthProvider({ children }) {
     setIsAuthModalOpen(false);
   };
 
+  const loginWithGoogleCredential = async (credential) => {
+    try {
+      const res = await apiFetch("/api/auth/google", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ credential })
+      });
+      const data = await res.json();
+      if (data && data.user) {
+        setUser(data.user);
+        localStorage.setItem("ogpi_user", JSON.stringify(data.user));
+      }
+    } catch (e) {
+      console.error("Google Auth error:", e);
+    }
+    setIsAuthModalOpen(false);
+  };
+
   const loginWithEmail = async (email, name) => {
     try {
       const res = await apiFetch("/api/auth/login", {
@@ -138,7 +156,7 @@ function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, setUser, isAuthModalOpen, setIsAuthModalOpen, loginWithGoogle, loginWithEmail, logout, updateUser }}>
+    <AuthContext.Provider value={{ user, setUser, isAuthModalOpen, setIsAuthModalOpen, loginWithGoogle, loginWithGoogleCredential, loginWithEmail, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );
@@ -158,19 +176,63 @@ function GoogleIcon() {
   );
 }
 
-// --- Auth Modal ---
+// --- Auth Modal (With Real Google Identity Services) ---
 function AuthModal({ isOpen, onClose }) {
-  const { loginWithGoogle, loginWithEmail } = useAuth();
+  const { loginWithGoogle, loginWithGoogleCredential, loginWithEmail } = useAuth();
   const [authMode, setAuthMode] = useState("signin");
   const [email, setEmail] = useState("jeet.pramanick@industrial-intel.com");
   const [password, setPassword] = useState("••••••••••••");
   const [name, setName] = useState("Jeet Pramanick");
+  const [customClientId, setCustomClientId] = useState(localStorage.getItem("ogpi_google_client_id") || "");
+  const [showConfig, setShowConfig] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    apiFetch("/api/auth/config")
+      .then(res => res.json())
+      .then(cfg => {
+        const effectiveClientId = customClientId || cfg.google_client_id || localStorage.getItem("ogpi_google_client_id") || "724918239012-sampleid.apps.googleusercontent.com";
+        if (window.google?.accounts?.id) {
+          try {
+            window.google.accounts.id.initialize({
+              client_id: effectiveClientId,
+              callback: (res) => {
+                if (res && res.credential) {
+                  loginWithGoogleCredential(res.credential);
+                }
+              }
+            });
+            const btnElem = document.getElementById("googleGsiBtn");
+            if (btnElem) {
+              window.google.accounts.id.renderButton(btnElem, {
+                theme: "outline",
+                size: "large",
+                width: 320,
+                text: "continue_with",
+                shape: "rectangular"
+              });
+            }
+          } catch (e) {
+            console.warn("GIS Init Notice:", e);
+          }
+        }
+      })
+      .catch(() => {});
+  }, [isOpen, customClientId]);
 
   if (!isOpen) return null;
 
   const handleSubmit = (e) => {
     e.preventDefault();
     loginWithEmail(email, name);
+  };
+
+  const saveCustomClientId = (e) => {
+    e.preventDefault();
+    localStorage.setItem("ogpi_google_client_id", customClientId);
+    alert("✓ Custom Google Client ID saved! Reinitializing Google Sign-In.");
+    setShowConfig(false);
   };
 
   return (
@@ -189,10 +251,41 @@ function AuthModal({ isOpen, onClose }) {
         </div>
 
         <div className="modal-body">
-          <button className="btn-google" onClick={loginWithGoogle}>
+          {/* Real Google Identity Services Button Container */}
+          <div id="googleGsiBtn" style={{ display: "flex", justifyContent: "center", marginBottom: "0.75rem", minHeight: "40px" }}></div>
+
+          {/* Standard Fallback / Instant Google OAuth Button */}
+          <button className="btn-google" onClick={loginWithGoogle} style={{ marginBottom: "0.5rem" }}>
             <GoogleIcon />
-            <span>Continue with Google</span>
+            <span>Instant One-Click Google Auth</span>
           </button>
+
+          <div style={{ textAlign: "center", marginBottom: "0.75rem" }}>
+            <button
+              className="btn btn-secondary btn-sm"
+              style={{ fontSize: "0.72rem", padding: "0.15rem 0.5rem" }}
+              onClick={() => setShowConfig(!showConfig)}
+            >
+              ⚙️ {showConfig ? "Hide Google Client ID Config" : "Configure Custom Google Client ID"}
+            </button>
+          </div>
+
+          {showConfig && (
+            <form onSubmit={saveCustomClientId} style={{ background: "var(--bg-subtle)", padding: "0.75rem", borderRadius: "var(--radius-sm)", marginBottom: "0.75rem" }}>
+              <label className="form-label" style={{ fontSize: "0.75rem" }}>Google Cloud OAuth 2.0 Client ID</label>
+              <input
+                type="text"
+                className="form-input"
+                style={{ fontSize: "0.75rem", marginBottom: "0.5rem" }}
+                placeholder="e.g. 123456789-xyz.apps.googleusercontent.com"
+                value={customClientId}
+                onChange={e => setCustomClientId(e.target.value)}
+              />
+              <button type="submit" className="btn btn-primary btn-sm" style={{ width: "100%" }}>
+                Apply Client ID
+              </button>
+            </form>
+          )}
 
           <div className="auth-divider">
             <span>or sign in with email</span>
@@ -254,6 +347,7 @@ function AuthModal({ isOpen, onClose }) {
     </div>
   );
 }
+
 
 // --- Streamlined Sidebar ---
 function Sidebar({ currentSection, onSelectSection }) {
