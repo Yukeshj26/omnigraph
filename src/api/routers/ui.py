@@ -2,9 +2,10 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 from datetime import datetime
 
-from fastapi import APIRouter, HTTPException, Query, Response
+from fastapi import APIRouter, HTTPException, Query, Response, UploadFile, File
 from fastapi.responses import FileResponse
 
+from src.services.catalog_enricher import enrich_catalog_csv, enrich_raw_catalog_row, OUTPUT_CSV_HEADERS
 from src.services.catalog_store import catalog_store
 from src.services.report_generator import generate_compliance_pdf_report
 from src.validation.rules import default_rules
@@ -73,6 +74,88 @@ def get_product_pdf_report(sku: str = Query(..., description="Product SKU to gen
             "Content-Disposition": f"attachment; filename={sku}_Compliance_Report.pdf"
         },
     )
+
+
+@router.post("/catalog/enrich-csv", tags=["ui"])
+def enrich_raw_catalog_csv_endpoint(payload: Dict[str, Any]) -> Dict[str, Any]:
+    """Process raw input catalog CSV text and return standardized 150+ column master catalog CSV."""
+    raw_csv = payload.get("raw_csv", "")
+    if not raw_csv.strip():
+        raise HTTPException(status_code=400, detail="Empty CSV input provided.")
+    
+    enriched_csv_text = enrich_catalog_csv(raw_csv)
+    
+    # Also parse and store preview products into catalog_store
+    import csv, io
+    reader = csv.DictReader(io.StringIO(raw_csv.strip()))
+    count = 0
+    for row in reader:
+        sku = row.get("Mfg_Part_Num", "").strip() or f"ITEM-{count+1}"
+        desc = row.get("Part_Desc", "").strip()
+        manuf = row.get("Part_Manuf", "").strip()
+        if sku:
+            catalog_store.save_product({
+                "sku": sku,
+                "name": desc or sku,
+                "category": "Standardized Catalog Part",
+                "description": f"{desc} (Manufactured by {manuf})",
+                "status": "compliant",
+                "attributes": [
+                    {"key": "mfg_part_num", "label": "Manufacturer Part #", "value": sku, "unit": ""},
+                    {"key": "part_manuf", "label": "Manufacturer", "value": manuf, "unit": ""}
+                ]
+            })
+            count += 1
+            
+    catalog_store.add_audit_log(
+        action="Batch CSV Standardization",
+        sku=f"{count} Items",
+        status="Enriched (150+ Cols)",
+        details=f"Standardized {count} raw catalog entries into enterprise 150-column schema."
+    )
+    
+    return {
+        "status": "success",
+        "processed_count": count,
+        "csv_data": enriched_csv_text
+    }
+
+
+@router.post("/catalog/upload-csv", tags=["ui"])
+async def upload_and_enrich_csv_file(file: UploadFile = File(...)):
+    """Upload a raw catalog CSV file and return the standardized enterprise CSV."""
+    contents = await file.read()
+    raw_csv_text = contents.decode("utf-8", errors="ignore")
+    enriched_csv_text = enrich_catalog_csv(raw_csv_text)
+    
+    return Response(
+        content=enriched_csv_text,
+        media_type="text/csv",
+        headers={
+            "Content-Disposition": f"attachment; filename=Standardized_Master_Catalog_{file.filename}.csv"
+        }
+    )
+
+
+@router.get("/catalog/export-master-csv", tags=["ui"])
+def export_master_catalog_csv_endpoint():
+    """Export the current live catalog into the standardized 150+ attribute enterprise CSV format."""
+    products = catalog_store.list_products()
+    raw_rows = []
+    for p in products:
+        raw_rows.append(f"{p.get('sku')},\"{p.get('name')}\",-- Unbranded --,-- No Unilog Brand --,-- No DIB Brand --,Industrial Supplier")
+    
+    raw_csv_text = "Mfg_Part_Num,Part_Desc,E1_Brand,Unilog_Brand,DIB_Brand,Part_Manuf\n" + "\n".join(raw_rows)
+    enriched_csv = enrich_catalog_csv(raw_csv_text)
+    
+    return Response(
+        content=enriched_csv,
+        media_type="text/csv",
+        headers={
+            "Content-Disposition": "attachment; filename=Standardized_Enterprise_Master_Catalog.csv"
+        }
+    )
+
 
 
 

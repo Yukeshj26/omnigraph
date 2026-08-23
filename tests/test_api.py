@@ -142,4 +142,26 @@ def test_pdf_report_generation():
     assert len(pdf_res.content) > 500
 
 
+def test_enrich_raw_csv():
+    sample_csv = """Mfg_Part_Num,Part_Desc,E1_Brand,Unilog_Brand,DIB_Brand,Part_Manuf
+DCB518ASTS06G,"DCB518ASTS06G Diablo 1/2""x18"" - Sanding Belt 6pc",-- Unbranded --,-- No Unilog Brand --,-- No DIB Brand --,Freud Inc (2435)
+PDSH4816AF,PDSH4816AF Dishwasher SS - Display Only,-- Unbranded --,-- No Unilog Brand --,-- No DIB Brand --,Appliance Dealers Cooperative (APPDE)"""
+    res = client.post("/api/catalog/enrich-csv", json={"raw_csv": sample_csv})
+    assert res.status_code == 200
+    data = res.json()
+    assert data["status"] == "success"
+    assert data["processed_count"] == 2
+    assert "ATTRIBUTE_LABEL 1" in data["csv_data"]
+    assert "Classpath" in data["csv_data"]
+
+
+def test_export_master_csv():
+    res = client.get("/api/catalog/export-master-csv")
+    assert res.status_code == 200
+    assert "text/csv" in res.headers.get("content-type", "")
+    assert "MFR URL" in res.text
+    assert "ATTRIBUTE_LABEL 50" in res.text
+
+
+
 

@@ -1,6 +1,6 @@
 /**
  * Omni-Graph Product Intelligence (OGPI) - React 18 Studio App
- * Clean & Streamlined Interface with Profile Photo Editing & Downloadable PDF Reports
+ * Industrial Catalog Intelligence, Schema Standardization & Multi-Format Exports
  */
 
 const { useState, useEffect, useContext, createContext, useMemo, useRef } = React;
@@ -21,31 +21,43 @@ function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const saved = localStorage.getItem("ogpi_user");
+    if (saved) {
+      try {
+        setUser(JSON.parse(saved));
+      } catch (e) {}
+    }
+
     apiFetch("/api/user/profile")
       .then(res => res.json())
       .then(data => {
-        const saved = localStorage.getItem("ogpi_user");
-        setUser(saved ? JSON.parse(saved) : data);
+        const currentSaved = localStorage.getItem("ogpi_user");
+        if (!currentSaved) {
+          setUser(data);
+          localStorage.setItem("ogpi_user", JSON.stringify(data));
+        }
       })
       .catch(() => {
-        const fallback = {
-          id: "usr_99812",
-          name: "Jeet Pramanick",
-          email: "jeet.pramanick@industrial-intel.com",
-          role: "Product Catalog Manager",
-          department: "Product Engineering & Catalog Operations",
-          organization: "Omni-Graph Industrial Labs",
-          avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
-          auth_provider: "google",
-          api_key: "ogpi_live_9f823a1c8b20464293f0bce427a1",
-          connected_integrations: {
-            sap: { status: "connected", endpoint: "https://sap.corp.internal/odata/v4/catalog", last_sync: "Just now" },
-            akeneo: { status: "connected", endpoint: "https://pim.industrial.io/api/rest/v1", last_sync: "Just now" },
-            neo4j: { status: "connected", endpoint: "bolt://localhost:7687", last_sync: "Active" }
-          },
-          preferences: { theme: "light", email_alerts: true, auto_validation: true }
-        };
-        setUser(fallback);
+        if (!saved) {
+          const fallback = {
+            id: "usr_99812",
+            name: "Jeet Pramanick",
+            email: "jeet.pramanick@industrial-intel.com",
+            role: "Product Catalog Manager",
+            department: "Product Engineering & Catalog Operations",
+            organization: "Omni-Graph Industrial Labs",
+            avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+            auth_provider: "google",
+            api_key: "ogpi_live_9f823a1c8b20464293f0bce427a1",
+            connected_integrations: {
+              sap: { status: "connected", endpoint: "https://sap.corp.internal/odata/v4/catalog", last_sync: "Just now" },
+              akeneo: { status: "connected", endpoint: "https://pim.industrial.io/api/rest/v1", last_sync: "Just now" },
+              neo4j: { status: "connected", endpoint: "bolt://localhost:7687", last_sync: "Active" }
+            },
+            preferences: { theme: "light", email_alerts: true, auto_validation: true }
+          };
+          setUser(fallback);
+        }
       })
       .finally(() => setLoading(false));
   }, []);
@@ -102,7 +114,6 @@ function AuthProvider({ children }) {
 
   const updateUser = async (updatedFields) => {
     const updatedUser = { ...user, ...updatedFields };
-
     setUser(updatedUser);
     localStorage.setItem("ogpi_user", JSON.stringify(updatedUser));
     try {
@@ -125,7 +136,6 @@ function AuthProvider({ children }) {
   if (loading || !user) {
     return <div style={{ padding: "2rem", textAlign: "center", color: "var(--text-muted)" }}>Loading OMNI GRAPH Studio...</div>;
   }
-
 
   return (
     <AuthContext.Provider value={{ user, setUser, isAuthModalOpen, setIsAuthModalOpen, loginWithGoogle, loginWithEmail, logout, updateUser }}>
@@ -245,15 +255,15 @@ function AuthModal({ isOpen, onClose }) {
   );
 }
 
-// --- Streamlined Sidebar (Dashboard, Ingest, Catalog, Reports, Profile) ---
+// --- Streamlined Sidebar ---
 function Sidebar({ currentSection, onSelectSection }) {
   const { user, setIsAuthModalOpen } = useAuth();
 
   const navItems = [
     { id: "overview", label: "Dashboard", icon: "📊", badge: "Live" },
-    { id: "ingest_pdf", label: "Upload & Scan PDFs", icon: "📄", badge: "Scanner" },
-    { id: "catalog", label: "Product Catalog", icon: "📦", badge: "Catalog" },
-    { id: "reports", label: "Compliance Reports", icon: "📑", badge: "PDF" },
+    { id: "ingest_pdf", label: "Import & Standardize", icon: "⚡", badge: "PDF/CSV" },
+    { id: "catalog", label: "Product Catalog", icon: "📦", badge: "Master" },
+    { id: "reports", label: "Reports & CSV Exports", icon: "📑", badge: "150+ Cols" },
     { id: "profile", label: "My Profile", icon: "👤", badge: "Account" }
   ];
 
@@ -335,9 +345,9 @@ function TopNavbar({ currentSection, onNavigate }) {
 
   const titles = {
     overview: { title: "Executive Dashboard", sub: "Live catalog metrics, verification pass rates, and system activity" },
-    ingest_pdf: { title: "Upload & Scan Catalog PDFs", sub: "Extract product numbers with genuine visual proof and bounding boxes" },
+    ingest_pdf: { title: "Import, Extract & Standardize Data", sub: "Transform raw PDFs and unstructured supplier CSVs into standardized 150+ column schemas" },
     catalog: { title: "Standardized Product Catalog", sub: "Browse, manage, search, and export enriched industrial product specifications" },
-    reports: { title: "Verification & Compliance Reports", sub: "Generate and download formal industrial product compliance certificates" },
+    reports: { title: "Verification Reports & Master CSV Export", sub: "Generate downloadable PDF certificates and full 150+ column enterprise master CSVs" },
     profile: { title: "User Profile & Settings", sub: "Manage personal account, security tokens, profile image, and enterprise connectors" }
   };
 
@@ -372,7 +382,7 @@ function TopNavbar({ currentSection, onNavigate }) {
   );
 }
 
-// --- View 1: User Profile & Settings (With Photo Editing) ---
+// --- View 1: User Profile & Settings ---
 function UserProfileView() {
   const { user, updateUser, setIsAuthModalOpen, logout } = useAuth();
   const [activeTab, setActiveTab] = useState("general");
@@ -411,7 +421,6 @@ function UserProfileView() {
       .then(data => setAuditLogs(data))
       .catch(() => {});
   }, [activeTab]);
-
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -664,7 +673,7 @@ function UserProfileView() {
                         <td><strong>{log.action}</strong></td>
                         <td><span className="code-inline">{log.sku}</span></td>
                         <td>
-                          <span className={`badge ${log.status.toLowerCase().includes('ok') || log.status.toLowerCase().includes('compliant') || log.status.toLowerCase().includes('success') ? 'badge-success' : 'badge-danger'}`}>
+                          <span className={`badge ${log.status.toLowerCase().includes('ok') || log.status.toLowerCase().includes('compliant') || log.status.toLowerCase().includes('success') || log.status.toLowerCase().includes('enriched') ? 'badge-success' : 'badge-danger'}`}>
                             {log.status}
                           </span>
                         </td>
@@ -770,16 +779,16 @@ function OverviewView({ onNavigate }) {
             <div className="kpi-icon-wrap purple">🏷️</div>
           </div>
           <div className="kpi-value">{stats.total_attributes}</div>
-          <div className="kpi-meta"><span>Verified physical attributes</span></div>
+          <div className="kpi-meta"><span>Standardized physical attributes</span></div>
         </div>
 
         <div className="kpi-card">
           <div className="kpi-header">
-            <span className="kpi-label">Physics & Safety Rules</span>
-            <div className="kpi-icon-wrap emerald">⚖️</div>
+            <span className="kpi-label">Enterprise CSV Schema</span>
+            <div className="kpi-icon-wrap emerald">📊</div>
           </div>
-          <div className="kpi-value">{stats.rules_count}</div>
-          <div className="kpi-meta"><span>Z3 SMT formal rules</span></div>
+          <div className="kpi-value">150+</div>
+          <div className="kpi-meta"><span>Attributes, Features & Taxonomies</span></div>
         </div>
 
         <div className="kpi-card">
@@ -802,16 +811,16 @@ function OverviewView({ onNavigate }) {
         <div className="card-body">
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "1rem" }}>
             <div style={{ background: "var(--bg-subtle)", padding: "1rem", borderRadius: "var(--radius-md)", borderTop: "3px solid var(--brand-primary)" }}>
-              <strong style={{ color: "var(--text-primary)", fontSize: "0.9rem" }}>1. Smart Document Scanner</strong>
+              <strong style={{ color: "var(--text-primary)", fontSize: "0.9rem" }}>1. Multi-Format Importer (PDF & CSV)</strong>
               <p style={{ fontSize: "0.78rem", color: "var(--text-muted)", marginTop: "0.35rem" }}>
-                PyMuPDF extracts tables, text, and spatial bounding boxes `{'{x0, y0, x1, y1}'}` directly from source PDFs.
+                Accepts raw PDFs and unstructured supplier CSVs. Extracts bounding boxes, part numbers, and raw specs.
               </p>
             </div>
 
             <div style={{ background: "var(--bg-subtle)", padding: "1rem", borderRadius: "var(--radius-md)", borderTop: "3px solid var(--color-purple)" }}>
-              <strong style={{ color: "var(--text-primary)", fontSize: "0.9rem" }}>2. AI Double-Check Verifier</strong>
+              <strong style={{ color: "var(--text-primary)", fontSize: "0.9rem" }}>2. Brand & Taxonomy Normalizer</strong>
               <p style={{ fontSize: "0.78rem", color: "var(--text-muted)", marginTop: "0.35rem" }}>
-                Adversarial verifier agent audits source citations and maps standard codes (ETIM 9.0, UNSPSC, eCl@ss).
+                Identifies unbranded items, resolves manufacturers, and maps Dept, Class, Fine, and standard Classpaths.
               </p>
             </div>
 
@@ -823,9 +832,9 @@ function OverviewView({ onNavigate }) {
             </div>
 
             <div style={{ background: "var(--bg-subtle)", padding: "1rem", borderRadius: "var(--radius-md)", borderTop: "3px solid var(--color-info)" }}>
-              <strong style={{ color: "var(--text-primary)", fontSize: "0.9rem" }}>4. Direct ERP Integration</strong>
+              <strong style={{ color: "var(--text-primary)", fontSize: "0.9rem" }}>4. 150+ Column Master CSV & ERP Export</strong>
               <p style={{ fontSize: "0.78rem", color: "var(--text-muted)", marginTop: "0.35rem" }}>
-                Automated REST & OData synchronization with SAP S/4HANA and Akeneo PIM master data catalogs.
+                Generates complete 50-attribute master CSV exports, certificates, and live SAP/Akeneo synchronization.
               </p>
             </div>
           </div>
@@ -840,11 +849,20 @@ function OverviewView({ onNavigate }) {
         </div>
         <div className="card-body" style={{ display: "flex", flexWrap: "wrap", gap: "0.75rem" }}>
           <button className="btn btn-primary" onClick={() => onNavigate("ingest_pdf")}>
-            📄 Scan a Catalog PDF
+            ⚡ Import & Standardize (PDF / CSV)
           </button>
           <button className="btn btn-secondary" onClick={() => onNavigate("catalog")}>
             📦 View Product Catalog ({stats.total_products})
           </button>
+          <a
+            href={`${API_BASE}/api/catalog/export-master-csv`}
+            target="_blank"
+            rel="noreferrer"
+            className="btn btn-secondary"
+            download="Standardized_Enterprise_Master_Catalog.csv"
+          >
+            📊 Export Master CSV (150+ Cols)
+          </a>
           <button className="btn btn-secondary" onClick={() => onNavigate("reports")}>
             📑 View Compliance Reports
           </button>
@@ -857,13 +875,27 @@ function OverviewView({ onNavigate }) {
   );
 }
 
-// --- View 3: Document Scanner & Real Visual Proof Viewer ---
+// --- View 3: Document Scanner & CSV Data Transformer ---
 function IngestionStudioView() {
+  const [activeMode, setActiveMode] = useState("csv"); // 'csv' or 'pdf'
   const [product, setProduct] = useState(null);
   const [productsList, setProductsList] = useState([]);
   const [highlightedKey, setHighlightedKey] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [pageImageUrl, setPageImageUrl] = useState("/api/catalog/page-image?document_id=sample_hydraulic_fitting&page=1");
+
+  // CSV State
+  const sampleCsvInput = `Mfg_Part_Num,Part_Desc,E1_Brand,Unilog_Brand,DIB_Brand,Part_Manuf
+DCB518ASTS06G,"DCB518ASTS06G Diablo 1/2""x18"" - Sanding Belt 6pc",-- Unbranded --,-- No Unilog Brand --,-- No DIB Brand --,Freud Inc (2435)
+3MABR-7100075678,3M 775L Stikit Film P150 - Cubitron II 50 Disc/Box,-- Unbranded --,-- No Unilog Brand --,-- No DIB Brand --,Jam Industrial Supply LLC (JAMIN)
+PDSH4816AF,PDSH4816AF Dishwasher SS - Display Only,-- Unbranded --,-- No Unilog Brand --,-- No DIB Brand --,Appliance Dealers Cooperative (APPDE)
+WDTS7024RZ,WDTS7024RZ Dishwasher SS - Display Only,-- Unbranded --,-- No Unilog Brand --,-- No DIB Brand --,Appliance Dealers Cooperative (APPDE)
+49-94-0013,"49-94-0013 Milw 5""x.045""x7/8"" Metal Cut Off Disc",-- Unbranded --,-- No Unilog Brand --,-- No DIB Brand --,Milwaukee Accessory (4031)
+KDFM404KPS,KDFM404KPS Dishwasher SS,-- Unbranded --,-- No Unilog Brand --,-- No DIB Brand --,Appliance Dealers Cooperative (APPDE)`;
+
+  const [rawCsvText, setRawCsvText] = useState(sampleCsvInput);
+  const [enrichedCsvResult, setEnrichedCsvResult] = useState(null);
+  const [isProcessingCsv, setIsProcessingCsv] = useState(false);
 
   const loadData = () => {
     apiFetch('/api/demo-products')
@@ -905,152 +937,260 @@ function IngestionStudioView() {
     }
   };
 
+  const handleProcessCsv = async () => {
+    if (!rawCsvText.trim()) return;
+    setIsProcessingCsv(true);
+    try {
+      const res = await apiFetch("/api/catalog/enrich-csv", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ raw_csv: rawCsvText })
+      });
+      const data = await res.json();
+      setEnrichedCsvResult(data.csv_data);
+      alert(`✓ Successfully standardized ${data.processed_count} catalog items into 150+ column Master Schema!`);
+      loadData();
+    } catch (err) {
+      alert("CSV processing error: " + err.message);
+    } finally {
+      setIsProcessingCsv(false);
+    }
+  };
+
+  const handleCsvFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      setRawCsvText(evt.target.result);
+    };
+    reader.readAsText(file);
+  };
+
+  const downloadEnrichedCsv = () => {
+    if (!enrichedCsvResult) return;
+    const blob = new Blob([enrichedCsvResult], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "Standardized_Master_Catalog_Output.csv";
+    a.click();
+  };
+
   const selectProduct = (p) => {
     setProduct(p);
     const docId = p.source_filename ? p.source_filename.replace(/\.[^/.]+$/, "") : "sample_hydraulic_fitting";
     setPageImageUrl(`/api/catalog/page-image?document_id=${encodeURIComponent(docId)}&page=1&t=${Date.now()}`);
   };
 
-  if (!product) return <div>Loading Catalog Scanner...</div>;
-
   return (
     <div>
-      <div className="card">
-        <div className="card-header">
-          <div className="card-header-title">
-            <span>📄</span> Catalog PDF Scanner & Visual Grounding
-          </div>
-          <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
-            <select
-              className="form-input"
-              style={{ width: "auto", fontSize: "0.82rem", padding: "0.3rem 0.6rem" }}
-              value={product.sku}
-              onChange={e => {
-                const found = productsList.find(p => p.sku === e.target.value);
-                if (found) selectProduct(found);
-              }}
-            >
-              {productsList.map(p => (
-                <option key={p.sku} value={p.sku}>{p.sku}: {p.name}</option>
-              ))}
-            </select>
-
-            <label className="btn btn-primary btn-sm" style={{ cursor: "pointer" }}>
-              <span>{isUploading ? "Scanning..." : "📤 Upload Any PDF"}</span>
-              <input type="file" accept=".pdf" onChange={handleFileUpload} style={{ display: "none" }} />
-            </label>
-          </div>
-        </div>
+      {/* Mode Selector Tabs */}
+      <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1rem" }}>
+        <button
+          className={`btn ${activeMode === 'csv' ? 'btn-primary' : 'btn-secondary'}`}
+          onClick={() => setActiveMode('csv')}
+        >
+          📊 Raw CSV Schema Transformer (150+ Cols)
+        </button>
+        <button
+          className={`btn ${activeMode === 'pdf' ? 'btn-primary' : 'btn-secondary'}`}
+          onClick={() => setActiveMode('pdf')}
+        >
+          📄 PDF Catalog Visual Scanner
+        </button>
       </div>
 
-      <div className="split-pane">
-        <div className="card">
-          <div className="card-header">
-            <div>
-              <h3 style={{ fontSize: "0.95rem", fontWeight: 700 }}>{product.name}</h3>
-              <p style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>Document Preview • Real Bounding Box Citations</p>
-            </div>
-            <span className="badge badge-purple">Hover to Highlight</span>
-          </div>
-          <div className="card-body" style={{ padding: 0 }}>
-            <div className="doc-canvas-stage">
-              <div className="pdf-mock-page" style={{ position: "relative", minHeight: "420px" }}>
-                {/* Real Rendered PDF Page Image */}
-                <img
-                  src={pageImageUrl}
-                  alt="Rendered PDF Page"
-                  style={{ width: "100%", height: "auto", display: "block", borderRadius: "var(--radius-sm)" }}
-                  onError={(e) => {
-                    e.target.style.display = "none";
-                  }}
-                />
-
-                {/* Spatial Bounding Box Overlays */}
-                <div style={{ padding: "0.75rem" }}>
-                  {(product.attributes || []).map(attr => (
-                    <div
-                      key={attr.key}
-                      className={`mock-pdf-line ${highlightedKey === attr.key ? 'highlighted' : ''}`}
-                      onMouseEnter={() => setHighlightedKey(attr.key)}
-                      onMouseLeave={() => setHighlightedKey(null)}
-                      style={{ cursor: "pointer" }}
-                    >
-                      <span><strong>{attr.label}:</strong> {attr.value} {attr.unit || ''}</span>
-                      <span className="bbox-tag">
-                        {attr.citation && attr.citation.bounding_box ? 
-                          `x:${Math.round(attr.citation.bounding_box.x0)} y:${Math.round(attr.citation.bounding_box.y0)}` : 
-                          "Grounded"}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
+      {activeMode === "csv" && (
         <div className="card">
           <div className="card-header">
             <div className="card-header-title">
-              <span>📋</span> Extracted Specifications ({product.attributes ? product.attributes.length : 0})
+              <span>⚡</span> Raw Supplier CSV -> Standardized Enterprise Master CSV
             </div>
-            <span className={`badge ${product.status === 'compliant' ? 'badge-success' : 'badge-danger'}`}>
-              {product.status === 'compliant' ? 'Verified (SAT)' : 'Violation (UNSAT)'}
-            </span>
+            <span className="badge badge-purple">150+ Column Normalizer</span>
           </div>
-          <div className="card-body" style={{ padding: 0 }}>
-            <div className="table-container">
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th>Specification</th>
-                    <th>Extracted Value</th>
-                    <th>Standard Code</th>
-                    <th>Confidence</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {(product.attributes || []).map(attr => (
-                    <tr
-                      key={attr.key}
-                      className={highlightedKey === attr.key ? 'row-active' : ''}
-                      onMouseEnter={() => setHighlightedKey(attr.key)}
-                      onMouseLeave={() => setHighlightedKey(null)}
-                    >
-                      <td><strong>{attr.label}</strong></td>
-                      <td><strong>{attr.value} {attr.unit || ''}</strong></td>
-                      <td>
-                        <span className="badge badge-info">{attr.standard_scheme || "ETIM"}: {attr.standard_code || "EC011478"}</span>
-                      </td>
-                      <td>
-                        <span className="badge badge-success">{Math.round((attr.confidence || 0.96) * 100)}%</span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+          <div className="card-body">
+            <p style={{ fontSize: "0.84rem", color: "var(--text-secondary)", marginBottom: "1rem" }}>
+              Paste unstandardized supplier rows (e.g. <code>Mfg_Part_Num, Part_Desc, Part_Manuf</code>) or upload your CSV file. Our intelligence engine resolves brands, infers taxonomy classpaths, normalizes 50 structured attributes, and formats long/marketing descriptions.
+            </p>
+
+            <div style={{ display: "flex", gap: "0.5rem", marginBottom: "0.75rem", flexWrap: "wrap" }}>
+              <label className="btn btn-secondary btn-sm" style={{ cursor: "pointer" }}>
+                <span>📁 Upload CSV File</span>
+                <input type="file" accept=".csv,.txt" onChange={handleCsvFileUpload} style={{ display: "none" }} />
+              </label>
+              <button
+                className="btn btn-primary btn-sm"
+                onClick={handleProcessCsv}
+                disabled={isProcessingCsv}
+              >
+                {isProcessingCsv ? "Standardizing..." : "🚀 Transform & Enrich into Master CSV"}
+              </button>
+              {enrichedCsvResult && (
+                <button className="btn btn-success btn-sm" onClick={downloadEnrichedCsv}>
+                  📥 Download Standardized Master CSV
+                </button>
+              )}
             </div>
 
-            <div style={{ padding: "1rem", borderTop: "1px solid var(--border-light)", background: "var(--bg-subtle)" }}>
-              <strong style={{ fontSize: "0.82rem", color: "var(--text-primary)", display: "block", marginBottom: "0.5rem" }}>
-                🛡️ AI Verifier Audit Notes:
-              </strong>
-              <ul style={{ listStyle: "none", padding: 0 }}>
-                {(product.verifier_notes || ["Verified against source coordinates."]).map((n, i) => (
-                  <li key={i} style={{ fontSize: "0.8rem", color: "var(--text-secondary)", marginBottom: "0.3rem" }}>
-                    ✓ {n}
-                  </li>
-                ))}
-              </ul>
+            <div style={{ display: "grid", gridTemplateColumns: enrichedCsvResult ? "1fr 1fr" : "1fr", gap: "1rem" }}>
+              <div>
+                <label className="form-label">Input: Raw Supplier CSV Data</label>
+                <textarea
+                  className="form-input"
+                  style={{ minHeight: "260px", fontFamily: "var(--font-mono)", fontSize: "0.76rem", lineHeight: "1.4" }}
+                  value={rawCsvText}
+                  onChange={e => setRawCsvText(e.target.value)}
+                  placeholder="Paste CSV rows here..."
+                />
+              </div>
+
+              {enrichedCsvResult && (
+                <div>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.3rem" }}>
+                    <label className="form-label" style={{ margin: 0 }}>Output: Standardized 150+ Column Enterprise Master CSV</label>
+                    <span className="badge badge-success">Enriched</span>
+                  </div>
+                  <textarea
+                    className="form-input"
+                    style={{ minHeight: "260px", fontFamily: "var(--font-mono)", fontSize: "0.72rem", background: "var(--bg-subtle)", color: "var(--brand-primary)", lineHeight: "1.4" }}
+                    value={enrichedCsvResult}
+                    readOnly
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>
-      </div>
+      )}
+
+      {activeMode === "pdf" && (
+        <div>
+          <div className="card">
+            <div className="card-header">
+              <div className="card-header-title">
+                <span>📄</span> Catalog PDF Scanner & Visual Grounding
+              </div>
+              <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+                <select
+                  className="form-input"
+                  style={{ width: "auto", fontSize: "0.82rem", padding: "0.3rem 0.6rem" }}
+                  value={product ? product.sku : ""}
+                  onChange={e => {
+                    const found = productsList.find(p => p.sku === e.target.value);
+                    if (found) selectProduct(found);
+                  }}
+                >
+                  {productsList.map(p => (
+                    <option key={p.sku} value={p.sku}>{p.sku}: {p.name}</option>
+                  ))}
+                </select>
+
+                <label className="btn btn-primary btn-sm" style={{ cursor: "pointer" }}>
+                  <span>{isUploading ? "Scanning..." : "📤 Upload Any PDF"}</span>
+                  <input type="file" accept=".pdf" onChange={handleFileUpload} style={{ display: "none" }} />
+                </label>
+              </div>
+            </div>
+          </div>
+
+          {product && (
+            <div className="split-pane">
+              <div className="card">
+                <div className="card-header">
+                  <div>
+                    <h3 style={{ fontSize: "0.95rem", fontWeight: 700 }}>{product.name}</h3>
+                    <p style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>Document Preview • Real Bounding Box Citations</p>
+                  </div>
+                  <span className="badge badge-purple">Hover to Highlight</span>
+                </div>
+                <div className="card-body" style={{ padding: 0 }}>
+                  <div className="doc-canvas-stage">
+                    <div className="pdf-mock-page" style={{ position: "relative", minHeight: "420px" }}>
+                      <img
+                        src={pageImageUrl}
+                        alt="Rendered PDF Page"
+                        style={{ width: "100%", height: "auto", display: "block", borderRadius: "var(--radius-sm)" }}
+                        onError={(e) => {
+                          e.target.style.display = "none";
+                        }}
+                      />
+
+                      <div style={{ padding: "0.75rem" }}>
+                        {(product.attributes || []).map(attr => (
+                          <div
+                            key={attr.key}
+                            className={`mock-pdf-line ${highlightedKey === attr.key ? 'highlighted' : ''}`}
+                            onMouseEnter={() => setHighlightedKey(attr.key)}
+                            onMouseLeave={() => setHighlightedKey(null)}
+                            style={{ cursor: "pointer" }}
+                          >
+                            <span><strong>{attr.label}:</strong> {attr.value} {attr.unit || ''}</span>
+                            <span className="bbox-tag">
+                              {attr.citation && attr.citation.bounding_box ? 
+                                `x:${Math.round(attr.citation.bounding_box.x0)} y:${Math.round(attr.citation.bounding_box.y0)}` : 
+                                "Grounded"}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="card">
+                <div className="card-header">
+                  <div className="card-header-title">
+                    <span>📋</span> Extracted Specifications ({product.attributes ? product.attributes.length : 0})
+                  </div>
+                  <span className={`badge ${product.status === 'compliant' ? 'badge-success' : 'badge-danger'}`}>
+                    {product.status === 'compliant' ? 'Verified (SAT)' : 'Violation (UNSAT)'}
+                  </span>
+                </div>
+                <div className="card-body" style={{ padding: 0 }}>
+                  <div className="table-container">
+                    <table className="data-table">
+                      <thead>
+                        <tr>
+                          <th>Specification</th>
+                          <th>Extracted Value</th>
+                          <th>Standard Code</th>
+                          <th>Confidence</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {(product.attributes || []).map(attr => (
+                          <tr
+                            key={attr.key}
+                            className={highlightedKey === attr.key ? 'row-active' : ''}
+                            onMouseEnter={() => setHighlightedKey(attr.key)}
+                            onMouseLeave={() => setHighlightedKey(null)}
+                          >
+                            <td><strong>{attr.label}</strong></td>
+                            <td><strong>{attr.value} {attr.unit || ''}</strong></td>
+                            <td>
+                              <span className="badge badge-info">{attr.standard_scheme || "ETIM"}: {attr.standard_code || "EC011478"}</span>
+                            </td>
+                            <td>
+                              <span className="badge badge-success">{Math.round((attr.confidence || 0.96) * 100)}%</span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
 
-// --- View 4: Real Product Catalog & Add Product Modal ---
+// --- View 4: Real Product Catalog ---
 function CatalogView() {
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState("");
@@ -1154,12 +1294,21 @@ function CatalogView() {
           <button className="btn btn-primary btn-sm" onClick={() => setIsAddModalOpen(true)}>
             ➕ Add Product
           </button>
+          <a
+            href={`${API_BASE}/api/catalog/export-master-csv`}
+            target="_blank"
+            rel="noreferrer"
+            className="btn btn-secondary btn-sm"
+            download="Standardized_Enterprise_Master_Catalog.csv"
+          >
+            📊 Export Master CSV
+          </a>
         </div>
       </div>
 
       {filtered.length === 0 ? (
         <div className="card" style={{ textAlign: "center", padding: "2rem", color: "var(--text-muted)" }}>
-          No matching products found. Click "Add Product" or "Upload & Scan PDFs" to ingest new items.
+          No matching products found. Click "Add Product" or "Import & Standardize" to ingest new items.
         </div>
       ) : (
         filtered.map(p => (
@@ -1301,7 +1450,7 @@ function CatalogView() {
   );
 }
 
-// --- View 5: Downloadable Compliance Reports Section ---
+// --- View 5: Downloadable Compliance Reports & Master CSV Export ---
 function ReportsView() {
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -1316,6 +1465,30 @@ function ReportsView() {
 
   return (
     <div>
+      {/* Master CSV Export Banner */}
+      <div className="card" style={{ marginBottom: "1.5rem", border: "2px solid var(--brand-primary)", background: "linear-gradient(to right, var(--bg-surface), var(--color-purple-bg))" }}>
+        <div className="card-body" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              <h3 style={{ fontSize: "1.15rem", fontWeight: 800 }}>Standardized Master Catalog (150+ Columns CSV)</h3>
+              <span className="badge badge-purple">Enterprise Schema</span>
+            </div>
+            <p style={{ fontSize: "0.82rem", color: "var(--text-secondary)", marginTop: "0.25rem" }}>
+              Export complete standardized taxonomy (Dept, Class, Fine, Classpath), 50 Attributes (Labels, Values, UOMs), 20 Item Features, and descriptions in single CSV.
+            </p>
+          </div>
+          <a
+            href={`${API_BASE}/api/catalog/export-master-csv`}
+            target="_blank"
+            rel="noreferrer"
+            className="btn btn-primary"
+            download="Standardized_Enterprise_Master_Catalog.csv"
+          >
+            📊 Download Full Master CSV
+          </a>
+        </div>
+      </div>
+
       <div className="card" style={{ marginBottom: "1.5rem" }}>
         <div className="card-header">
           <div className="card-header-title">

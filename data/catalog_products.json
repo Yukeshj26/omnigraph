@@ -68,7 +68,7 @@
         "standard_code": null,
         "confidence": 0.6,
         "citation": {
-          "document_id": "tmp_llyf6d0",
+          "document_id": "tmprvm_ezyr",
           "page_number": 1,
           "bounding_box": {
             "x0": 72.0,
@@ -89,7 +89,7 @@
         "standard_code": null,
         "confidence": 0.6,
         "citation": {
-          "document_id": "tmp_llyf6d0",
+          "document_id": "tmprvm_ezyr",
           "page_number": 1,
           "bounding_box": {
             "x0": 72.0,
@@ -110,7 +110,7 @@
         "standard_code": null,
         "confidence": 0.6,
         "citation": {
-          "document_id": "tmp_llyf6d0",
+          "document_id": "tmprvm_ezyr",
           "page_number": 1,
           "bounding_box": {
             "x0": 72.0,
@@ -131,7 +131,7 @@
         "standard_code": null,
         "confidence": 0.6,
         "citation": {
-          "document_id": "tmp_llyf6d0",
+          "document_id": "tmprvm_ezyr",
           "page_number": 1,
           "bounding_box": {
             "x0": 72.0,
@@ -152,7 +152,7 @@
         "standard_code": null,
         "confidence": 0.6,
         "citation": {
-          "document_id": "tmp_llyf6d0",
+          "document_id": "tmprvm_ezyr",
           "page_number": 1,
           "bounding_box": {
             "x0": 72.0,
@@ -173,7 +173,7 @@
         "standard_code": null,
         "confidence": 0.6,
         "citation": {
-          "document_id": "tmp_llyf6d0",
+          "document_id": "tmprvm_ezyr",
           "page_number": 1,
           "bounding_box": {
             "x0": 72.0,
@@ -194,7 +194,7 @@
         "standard_code": null,
         "confidence": 0.6,
         "citation": {
-          "document_id": "tmp_llyf6d0",
+          "document_id": "tmprvm_ezyr",
           "page_number": 1,
           "bounding_box": {
             "x0": 72.0,
@@ -215,7 +215,7 @@
         "standard_code": null,
         "confidence": 0.6,
         "citation": {
-          "document_id": "tmp_llyf6d0",
+          "document_id": "tmprvm_ezyr",
           "page_number": 1,
           "bounding_box": {
             "x0": 72.0,
@@ -236,7 +236,7 @@
         "standard_code": null,
         "confidence": 0.6,
         "citation": {
-          "document_id": "tmp_llyf6d0",
+          "document_id": "tmprvm_ezyr",
           "page_number": 1,
           "bounding_box": {
             "x0": 72.0,
@@ -249,7 +249,7 @@
       }
     ],
     "source_document_ids": [
-      "tmp_llyf6d0"
+      "tmprvm_ezyr"
     ],
     "status": "compliant",
     "verifier_notes": [],
@@ -263,6 +263,60 @@
         "dimensional_fit",
         "load_capacity"
       ],
+      "issues": []
+    }
+  },
+  {
+    "sku": "DCB518ASTS06G",
+    "name": "DCB518ASTS06G Diablo 1/2\"x18\" - Sanding Belt 6pc",
+    "category": "Standardized Catalog Part",
+    "description": "DCB518ASTS06G Diablo 1/2\"x18\" - Sanding Belt 6pc (Manufactured by Freud Inc (2435))",
+    "status": "compliant",
+    "attributes": [
+      {
+        "key": "mfg_part_num",
+        "label": "Manufacturer Part #",
+        "value": "DCB518ASTS06G",
+        "unit": ""
+      },
+      {
+        "key": "part_manuf",
+        "label": "Manufacturer",
+        "value": "Freud Inc (2435)",
+        "unit": ""
+      }
+    ],
+    "validation": {
+      "product_sku": "DCB518ASTS06G",
+      "passed": true,
+      "checked_rules": [],
+      "issues": []
+    }
+  },
+  {
+    "sku": "PDSH4816AF",
+    "name": "PDSH4816AF Dishwasher SS - Display Only",
+    "category": "Standardized Catalog Part",
+    "description": "PDSH4816AF Dishwasher SS - Display Only (Manufactured by Appliance Dealers Cooperative (APPDE))",
+    "status": "compliant",
+    "attributes": [
+      {
+        "key": "mfg_part_num",
+        "label": "Manufacturer Part #",
+        "value": "PDSH4816AF",
+        "unit": ""
+      },
+      {
+        "key": "part_manuf",
+        "label": "Manufacturer",
+        "value": "Appliance Dealers Cooperative (APPDE)",
+        "unit": ""
+      }
+    ],
+    "validation": {
+      "product_sku": "PDSH4816AF",
+      "passed": true,
+      "checked_rules": [],
       "issues": []
     }
   }
